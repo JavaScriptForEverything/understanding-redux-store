@@ -79,7 +79,10 @@ unsubscribe()
 
 ###### /
 ```
-$ node store/index.js
+// $ node store/index.js
+$ node app.js
+$ yarn start
+$ yarn dev
 ```
 
 

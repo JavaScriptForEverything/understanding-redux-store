@@ -1,25 +1,9 @@
-const { legacy_createStore: createStore } = require('redux');
+const { legacy_createStore: createStore, combineReducers } = require('redux');
+const cakeSlice = require('./slice/cake')
 
-const initialState = {
-	numberOfCake: 10
-}
-
-const reducer = (state = initialState, action) => {
-	switch(action.type) {
-		case 'ordered': return {
-			...state,
-			numberOfCake: state.numberOfCake - action.payload
-		}
-
-		default: return state
-	}
-}
+const reducer = combineReducers({
+	cake: cakeSlice
+})
 
 const store = createStore(reducer)
-
-console.log(store.getState())
-const unsubscribe = store.subscribe(() => console.log(store.getState()))
-
-store.dispatch({ type: 'ordered', payload: 1 })
-
-unsubscribe()
+module.exports = store

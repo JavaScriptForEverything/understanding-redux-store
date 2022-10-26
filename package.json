@@ -1,9 +1,16 @@
 {
   "name": "redux",
   "version": "1.0.0",
-  "main": "index.js",
+  "main": "app.js",
   "license": "MIT",
+	"scripts": {
+		"start" : "node .",
+		"dev" : "nodemon ."
+	},
   "dependencies": {
     "redux": "^4.2.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.20"
   }
 }
