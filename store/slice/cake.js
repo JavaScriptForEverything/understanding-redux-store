@@ -1,3 +1,4 @@
+const CAKE_ORDRED = 'cake/ordered'
 
 const initialState = {
 	numberOfCake: 10
@@ -5,7 +6,7 @@ const initialState = {
 
 const reducer = (state = initialState, action) => {
 	switch(action.type) {
-		case 'ordered': return {
+		case CAKE_ORDRED: return {
 			...state,
 			numberOfCake: state.numberOfCake - action.payload
 		}
@@ -14,3 +15,11 @@ const reducer = (state = initialState, action) => {
 	}
 }
 module.exports = reducer
+
+
+module.exports.orderCake = (qty = 1) => {
+	return {
+		type: CAKE_ORDRED,
+		payload: qty
+	}
+}
