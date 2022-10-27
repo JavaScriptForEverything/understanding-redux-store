@@ -1,6 +1,12 @@
-const { createSlice } = require('@reduxjs/toolkit')
+const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit')
 const { actions: cakeSliceActions } = require('./cake')
 
+/* return actionCreator
+**					.panding
+**					.fulfilled
+**					.rejected
+*/ 
+const fetchedIcecream = createAsyncThunk('icecream/icecream', async() => 100 )
 
 const { reducer, actions } = createSlice({
 	name: 'icecream',
@@ -39,14 +45,33 @@ const { reducer, actions } = createSlice({
 	// 	}),
 	// }
 
-	extraReducers: (builder) => { 				// method-2: function Style
-		// builder.addCase('cake/orderCake', (state, action) => ({ 					// not work
-		builder.addCase(cakeSliceActions.ordered, (state, action) => ({ 		// It will work
-			...state,
-			numberOfIcecream: state.numberOfIcecream - 10
-		}))
-	}
+	// extraReducers: (builder) => { 				// method-2: function Style
+	// 	// builder.addCase('cake/orderCake', (state, action) => ({ 					// not work
+	// 	builder.addCase(cakeSliceActions.ordered, (state, action) => ({ 		// It will work
+	// 		...state,
+	// 		numberOfIcecream: state.numberOfIcecream - 10
+	// 	}))
+	// }
 
+	// handle asynchronous task from this slice or from any slice
+	extraReducers: (builder) => {
+		builder.addCase(fetchedIcecream.pending, (state, action) => ({
+			...state,
+			error: '',
+			loading: true
+		})) 
+		builder.addCase(fetchedIcecream.rejected, (state, action) => ({
+			...state,
+			loading: false,
+			error: action.payload.message
+		}))
+		builder.addCase(fetchedIcecream.fulfilled, (state, action) => ({
+			...state,
+			loading: false,
+			numberOfIcecream: state.numberOfIcecream + action.payload
+		}))
+		
+	}
 
 })
 module.exports = reducer
@@ -67,3 +92,6 @@ module.exports.restoreIcecream = (qty = 1) => (dispatch) => {
 		dispatch(actions.failed(err.message))
 	}
 }
+
+
+module.exports.fetchedIcecream = fetchedIcecream

@@ -735,3 +735,191 @@ module.exports.restoreIcecream = (qty = 1) => (dispatch) => {
 	}
 }
 ```
+
+
+
+
+
+## createSlice and extraReducers
+### createSlice
+```
+const {} = createSlice({
+	name: 'icecream',
+	initialState: { loading: false, error: '', nmberOfIcecream: 10 },
+	reducers: {
+		ordred: (state, action) => ({
+			...state,
+			numberOfIcecream: state.numberOfIcecream - action.payload
+		})
+	},
+
+	// Method-1: modify this slice's state based on other slice's dispatch 'cake/ordered'
+	extraReducers: {
+		['cake/ordered']: (state, action) => ({
+			...state,
+			numberOfIcecream: state.numberOfIcecream - action.payload
+		})
+	}
+
+	// Method-2: modify this slice's state based on other slice's dispatch 'cake/ordered'
+	extraReducers: (builder) => {
+		builder.addCase(cakeSliceActions.ordred, (state, action) => {
+			return {
+				...state,
+				numberOfIcecream: state.numberOfIcecream - action.payload
+			}
+		})
+	}
+
+	// Method-3: To handle async dispatch: no matter self slice or other slice's action
+
+		// this function must be top of the createReducer
+		const asyncFunc = createAsyncThuck('icecream/getIcecream', async() => 100)
+
+	extraReducers: (builder) => {
+		builder.addCase(asyncFunc.pending, (state, action) => {
+			state.loading = true
+		})
+		builder.addCase(asyncFunc.rejected, (state, action) => {
+			state.loading = false
+			state.error = action.error.message
+		})
+		builder.addCase(asyncFunc.fulfilled, (state, action) => {
+			state.loading = false
+			state.numberOfIcecream += 100
+		})
+	}
+
+})
+```
+
+### Example of createSlice.extraReducers
+#### /store/slice/icecream.js
+```
+const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit')
+const { actions: cakeSliceActions } = require('./cake')
+
+/* return actionCreator
+**					.panding
+**					.fulfilled
+**					.rejected
+*/ 
+const fetchedIcecream = createAsyncThunk('icecream/icecream', async() => 100 )
+
+const { reducer, actions } = createSlice({
+	name: 'icecream',
+	initialState: {
+		loading: false,
+		error: '',
+		numberOfIcecream: 20
+	}, 
+	reducers: {
+		requested: (state) => ({
+			...state,
+			loading: true,
+			error: '',
+		}),
+		ordered: (state, action) => ({
+			...state,
+			loading: false,
+			numberOfIcecream: state.numberOfIcecream - action.payload
+		}),
+		restored: (state, action) => ({
+			...state,
+			loading: false,
+			numberOfIcecream: state.numberOfIcecream + action.payload
+		}),
+		failed: (state, action) => ({
+			...state,
+			loading: false,
+			error: action.payload
+		}),
+	},
+
+	// extraReducers: { 									// method-1: Object Style
+	// 	['cake/ordered']: (state, action) => ({
+	// 		...state,
+	// 		numberOfIcecream: state.numberOfIcecream - 10
+	// 	}),
+	// }
+
+	// extraReducers: (builder) => { 				// method-2: function Style
+	// 	// builder.addCase('cake/orderCake', (state, action) => ({ 					// not work
+	// 	builder.addCase(cakeSliceActions.ordered, (state, action) => ({ 		// It will work
+	// 		...state,
+	// 		numberOfIcecream: state.numberOfIcecream - 10
+	// 	}))
+	// }
+
+	// handle asynchronous task from this slice or from any slice
+	extraReducers: (builder) => {
+		builder.addCase(fetchedIcecream.pending, (state, action) => ({
+			...state,
+			error: '',
+			loading: true
+		})) 
+		builder.addCase(fetchedIcecream.rejected, (state, action) => ({
+			...state,
+			loading: false,
+			error: action.payload.message
+		}))
+		builder.addCase(fetchedIcecream.fulfilled, (state, action) => ({
+			...state,
+			loading: false,
+			numberOfIcecream: state.numberOfIcecream + action.payload
+		}))
+		
+	}
+
+})
+module.exports = reducer
+
+module.exports.orderIcecream = (qty = 1) => (dispatch) => {
+	try {
+		dispatch(actions.requested())
+		dispatch(actions.ordered(qty))
+	} catch (err) {
+		dispatch(actions.failed(err.message))
+	}
+}
+module.exports.restoreIcecream = (qty = 1) => (dispatch) => {
+	try {
+		dispatch(actions.requested())
+		dispatch(actions.restored(qty))
+	} catch (err) {
+		dispatch(actions.failed(err.message))
+	}
+}
+
+
+module.exports.fetchedIcecream = fetchedIcecream
+```
+
+
+
+#### /app.js
+```
+const store = require('./store')
+const cakeSlice = require('./store/slice/cake')
+const icecreamSlice = require('./store/slice/icecream')
+
+
+const unsubscribe = store.subscribe(() => console.log(store.getState()))
+
+// // 1. dispatch plain object: default Style
+// store.dispatch({ type: 'cake/ordered', payload: 1 })
+
+
+// // 2. dispatch action instead of plain object: possible by the middleware
+// store.dispatch((dispatch) => {
+// 	dispatch({ type: 'cake/ordered', payload: 1 })
+// })
+
+
+store.dispatch(icecreamSlice.fetchedIcecream())
+store.dispatch(icecreamSlice.fetchedIcecream()) 	// require to show 1st async output
+
+
+
+unsubscribe()
+```
