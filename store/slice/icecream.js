@@ -1,77 +1,50 @@
-const ICECREAM_REQUSTED = 'icecream/requested'
-const ICECREAM_ORDRED = 'icecream/ordered'
-const ICECREAM_RESTORED = 'icecream/restored'
-const ICECREAM_FAILED = 'icecream/failed'
+const { createSlice } = require('@reduxjs/toolkit')
 
-const initialState = {
-	loading: false,
-	error: '',
-	numberOfIcecream: 20
-}
-
-const reducer = (state = initialState, action) => {
-	switch(action.type) {
-
-		case ICECREAM_REQUSTED: return {
+const { reducer, actions } = createSlice({
+	name: 'icecream',
+	initialState: {
+		loading: false,
+		error: '',
+		numberOfIcecream: 20
+	}, 
+	reducers: {
+		requested: (state) => ({
 			...state,
 			loading: true,
 			error: '',
-		}
-		case ICECREAM_ORDRED: return {
+		}),
+		ordered: (state, action) => ({
 			...state,
 			loading: false,
 			numberOfIcecream: state.numberOfIcecream - action.payload
-		}
-		case ICECREAM_RESTORED: return {
+		}),
+		restored: (state, action) => ({
 			...state,
 			loading: false,
 			numberOfIcecream: state.numberOfIcecream + action.payload
-		}
-		case ICECREAM_FAILED: return {
+		}),
+		failed: (state, action) => ({
 			...state,
 			loading: false,
 			error: action.payload
-		}
-
-		default: return state
+		}),
 	}
-}
-
+})
 module.exports = reducer
 
-
-
-// module.exports.orderIcecream = (qty = 1) => (dispatch) => {
-// 	dispatch({
-// 		type: ICECREAM_ORDRED,
-// 		payload: qty
-// 	})
-// }
 module.exports.orderIcecream = (qty = 1) => (dispatch) => {
 	try {
-		dispatch({ type: ICECREAM_REQUSTED })
-		dispatch({ 
-			type: ICECREAM_ORDRED,
-			payload: qty
-		})
+		dispatch(actions.requested())
+		dispatch(actions.ordered(qty))
 	} catch (err) {
-		dispatch({ 
-			type: ICECREAM_FAILED,
-			payload: err.message
-		})
+		dispatch(actions.failed(err.message))
 	}
 }
 module.exports.restoreIcecream = (qty = 1) => (dispatch) => {
 	try {
-		dispatch({ type: ICECREAM_REQUSTED })
-		dispatch({ 
-			type: ICECREAM_RESTORED,
-			payload: qty
-		})
+		dispatch(actions.requested())
+		dispatch(actions.restored(qty))
 	} catch (err) {
-		dispatch({ 
-			type: ICECREAM_FAILED,
-			payload: err.message
-		})
+		dispatch(actions.failed(err.message))
 	}
 }

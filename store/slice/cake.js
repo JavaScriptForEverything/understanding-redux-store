@@ -1,69 +1,52 @@
-const CAKE_REQUESTED = 'cake/requested'
-const CAKE_ORDRED = 'cake/ordered'
-const CAKE_RESTORED = 'cake/restored'
-const CAKE_FAILED = 'cake/failed'
+const { createSlice } = require('@reduxjs/toolkit')
 
-const initialState = {
-	loading: false,
-	error: '',
-	numberOfCake: 10
-}
-
-const reducer = (state = initialState, action) => {
-	switch(action.type) {
-		case CAKE_REQUESTED: return {
+const { reducer, actions } = createSlice({
+	name: 'cake',
+	initialState: {
+		loading: false,
+		error: '',
+		numberOfCake: 10
+	},
+	reducers: {
+		requested: (state) => ({
 			...state,
 			loading: true,
 			error: ''
-		}
-		case CAKE_ORDRED: return {
+		}),
+		ordered: (state, action) => ({
 			...state,
 			loading: false,
 			numberOfCake: state.numberOfCake - action.payload
-		}
-		case CAKE_RESTORED: return {
+		}),
+		restored: (state, action) => ({
 			...state,
 			loading: false,
 			numberOfCake: state.numberOfCake + action.payload
-		}
-		case CAKE_FAILED: return {
+		}),
+		failed: (state, action) => ({
 			...state,
 			loading: false,
 			error: action.payload
-		}
-
-		default: return state
+		})
 	}
-}
+})
 module.exports = reducer
 
 
 module.exports.orderCake = (qty = 1) => (dispatch) => {
 	try {
-		dispatch({ type: CAKE_REQUESTED })
-		dispatch({ 
-			type: CAKE_ORDRED,
-			payload: qty
-		})
+		dispatch(actions.requested())
+		dispatch(actions.ordered(qty))
 	} catch (err) {
-		dispatch({ 
-			type: CAKE_FAILED,
-			payload: err.message
-		})
+		dispatch(actions.failed(req.message))
 	}
 }
 
 module.exports.restoreCake = (qty = 1) => (dispatch) => {
 	try {
-		dispatch({ type: CAKE_REQUESTED })
-		dispatch({ 
-			type: CAKE_RESTORED,
-			payload: qty
-		})
+		dispatch(actions.requested())
+		dispatch(actions.restored(qty))
 	} catch (err) {
-		dispatch({ 
-			type: CAKE_FAILED,
-			payload: err.message
-		})
+		dispatch(actions.failed(err.message))
 	}
 }

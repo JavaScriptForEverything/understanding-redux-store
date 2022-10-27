@@ -442,3 +442,296 @@ const store = configureStore({
 })
 module.exports = store
 ```
+
+
+
+## Redux-Toolkit Features
+#### if `@reduxjs/toolkit` do the same as `redux` then why we need it ?
+
+#### Key features of `@reduxjs/toolkit`
+	. redux-toolkit remove boiler plate code we just have to use built-in methods
+	. createSlice method do all the boiler place code behind the scene 
+	. in redux every slice is isolated that others,
+	. To modify one slice's state from other slice we have 2 ways to do that.
+		1. By createSlice extra property `extraReducers` which also has 2 way: 
+			. dispatch as regular way: used to handle outside Synchronous action
+			. dispatch as builder way: used to handle outside Asynchronous action
+		2. By middleware: 
+			. Either custom middleware or
+			. redux-thunk which is already configured with redux-toolkit
+
+	. Why we need to midify one slice from other slice ?
+		- There are some reason, if want to update product slice after transition complete (which may user slice)
+		- in Next.js app when de-hydrade entire or particular slice then extraReducers do that.
+
+
+### Replace Boilar plate code by `createSlice`
+
+#### Key features of `@reduxjs/toolkit`
+
+#### Reolace this old: /store/slice/cake.js
+```
+const CAKE_REQUESTED = 'cake/requested'
+const CAKE_ORDRED = 'cake/ordered'
+const CAKE_RESTORED = 'cake/restored'
+const CAKE_FAILED = 'cake/failed'
+
+const initialState = {
+	loading: false,
+	error: '',
+	numberOfCake: 10
+}
+
+const reducer = (state = initialState, action) => {
+	switch(action.type) {
+		case CAKE_REQUESTED: return {
+			...state,
+			loading: true,
+			error: ''
+		}
+		case CAKE_ORDRED: return {
+			...state,
+			loading: false,
+			numberOfCake: state.numberOfCake - action.payload
+		}
+		case CAKE_RESTORED: return {
+			...state,
+			loading: false,
+			numberOfCake: state.numberOfCake + action.payload
+		}
+		case CAKE_FAILED: return {
+			...state,
+			loading: false,
+			error: action.payload
+		}
+
+		default: return state
+	}
+}
+module.exports = reducer
+
+
+module.exports.orderCake = (qty = 1) => (dispatch) => {
+	try {
+		dispatch({ type: CAKE_REQUESTED })
+		dispatch({ 
+			type: CAKE_ORDRED,
+			payload: qty
+		})
+	} catch (err) {
+		dispatch({ 
+			type: CAKE_FAILED,
+			payload: err.message
+		})
+	}
+}
+
+module.exports.restoreCake = (qty = 1) => (dispatch) => {
+	try {
+		dispatch({ type: CAKE_REQUESTED })
+		dispatch({ 
+			type: CAKE_RESTORED,
+			payload: qty
+		})
+	} catch (err) {
+		dispatch({ 
+			type: CAKE_FAILED,
+			payload: err.message
+		})
+	}
+}
+```
+
+#### Replace with this new: /store/slice/cake.js
+```
+const { createSlice } = require('@reduxjs/toolkit')
+
+const { reducer, actions } = createSlice({
+	name: 'cake',
+	initialState: {
+		loading: false,
+		error: '',
+		numberOfCake: 10
+	},
+	reducers: {
+		requested: (state) => ({
+			...state,
+			loading: true,
+			error: ''
+		}),
+		ordered: (state, action) => ({
+			...state,
+			loading: false,
+			numberOfCake: state.numberOfCake - action.payload
+		}),
+		restored: (state, action) => ({
+			...state,
+			loading: false,
+			numberOfCake: state.numberOfCake + action.payload
+		}),
+		failed: (state, action) => ({
+			...state,
+			loading: false,
+			error: action.payload
+		})
+	}
+})
+module.exports = reducer
+
+
+module.exports.orderCake = (qty = 1) => (dispatch) => {
+	try {
+		dispatch(actions.requested())
+		dispatch(actions.ordered(qty))
+	} catch (err) {
+		dispatch(actions.failed(req.message))
+	}
+}
+
+module.exports.restoreCake = (qty = 1) => (dispatch) => {
+	try {
+		dispatch(actions.requested())
+		dispatch(actions.restored(qty))
+	} catch (err) {
+		dispatch(actions.failed(err.message))
+	}
+}
+```
+
+
+
+
+#### Reolace this old: /store/slice/icecream.js
+```
+const ICECREAM_REQUSTED = 'icecream/requested'
+const ICECREAM_ORDRED = 'icecream/ordered'
+const ICECREAM_RESTORED = 'icecream/restored'
+const ICECREAM_FAILED = 'icecream/failed'
+
+const initialState = {
+	loading: false,
+	error: '',
+	numberOfIcecream: 20
+}
+
+const reducer = (state = initialState, action) => {
+	switch(action.type) {
+
+		case ICECREAM_REQUSTED: return {
+			...state,
+			loading: true,
+			error: '',
+		}
+		case ICECREAM_ORDRED: return {
+			...state,
+			loading: false,
+			numberOfIcecream: state.numberOfIcecream - action.payload
+		}
+		case ICECREAM_RESTORED: return {
+			...state,
+			loading: false,
+			numberOfIcecream: state.numberOfIcecream + action.payload
+		}
+		case ICECREAM_FAILED: return {
+			...state,
+			loading: false,
+			error: action.payload
+		}
+
+		default: return state
+	}
+}
+
+module.exports = reducer
+
+
+
+// module.exports.orderIcecream = (qty = 1) => (dispatch) => {
+// 	dispatch({
+// 		type: ICECREAM_ORDRED,
+// 		payload: qty
+// 	})
+// }
+module.exports.orderIcecream = (qty = 1) => (dispatch) => {
+	try {
+		dispatch({ type: ICECREAM_REQUSTED })
+		dispatch({ 
+			type: ICECREAM_ORDRED,
+			payload: qty
+		})
+	} catch (err) {
+		dispatch({ 
+			type: ICECREAM_FAILED,
+			payload: err.message
+		})
+	}
+}
+module.exports.restoreIcecream = (qty = 1) => (dispatch) => {
+	try {
+		dispatch({ type: ICECREAM_REQUSTED })
+		dispatch({ 
+			type: ICECREAM_RESTORED,
+			payload: qty
+		})
+	} catch (err) {
+		dispatch({ 
+			type: ICECREAM_FAILED,
+			payload: err.message
+		})
+	}
+}
+```
+
+#### Replace with this new /store/slice/icecream.js
+```
+const { createSlice } = require('@reduxjs/toolkit')
+
+const { reducer, actions } = createSlice({
+	name: 'icecream',
+	initialState: {
+		loading: false,
+		error: '',
+		numberOfIcecream: 20
+	}, 
+	reducers: {
+		requested: (state) => ({
+			...state,
+			loading: true,
+			error: '',
+		}),
+		ordered: (state, action) => ({
+			...state,
+			loading: false,
+			numberOfIcecream: state.numberOfIcecream - action.payload
+		}),
+		restored: (state, action) => ({
+			...state,
+			loading: false,
+			numberOfIcecream: state.numberOfIcecream + action.payload
+		}),
+		failed: (state, action) => ({
+			...state,
+			loading: false,
+			error: action.payload
+		}),
+	}
+})
+module.exports = reducer
+
+module.exports.orderIcecream = (qty = 1) => (dispatch) => {
+	try {
+		dispatch(actions.requested())
+		dispatch(actions.ordered(qty))
+	} catch (err) {
+		dispatch(actions.failed(err.message))
+	}
+}
+module.exports.restoreIcecream = (qty = 1) => (dispatch) => {
+	try {
+		dispatch(actions.requested())
+		dispatch(actions.restored(qty))
+	} catch (err) {
+		dispatch(actions.failed(err.message))
+	}
+}
+```
