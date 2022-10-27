@@ -395,3 +395,50 @@ Why we need to dispatch function instead object ?
 }
 ```
 
+
+
+## Replace Redux with Redux-Toolkit
+#### To replace `redux` with `@reduxjs/toolkit` only bellow changes will need and other remain same as it was
+```
+$ yarn add @reduxjs/toolkit
+```
+
+
+#### Old: /store/index.js
+```
+const { legacy_createStore: createStore, combineReducers, applyMiddleware } = require('redux')
+const logger = require('./middleware/logger')
+const dispatchFunc = require('./middleware/dispatchFunc')
+
+const cakeSlice = require('./slice/cake')
+const icecreamSlice = require('./slice/icecream')
+
+const reducer = combineReducers({
+	cake: cakeSlice,
+	icecream: icecreamSlice
+})
+
+const store = createStore(reducer, applyMiddleware(dispatchFunc, logger))
+module.exports = store
+```
+
+#### New: /store/index.js
+```
+const { configureStore } = require('@reduxjs/toolkit')
+const logger = require('./middleware/logger')
+
+// dispatchFunc => redux-thunk => already installed and configured with redux-toolkit
+// const dispatchFunc = require('./middleware/dispatchFunc')
+
+const cakeSlice = require('./slice/cake')
+const icecreamSlice = require('./slice/icecream')
+
+const store = configureStore({
+	reducer: {
+		cake: cakeSlice,
+		icecream: icecreamSlice
+	},
+	middleware: (getMiddlewares) => [...getMiddlewares(), logger]
+})
+module.exports = store
+```

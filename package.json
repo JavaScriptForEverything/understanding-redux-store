@@ -3,11 +3,12 @@
   "version": "1.0.0",
   "main": "app.js",
   "license": "MIT",
-	"scripts": {
-		"start" : "node .",
-		"dev" : "nodemon ."
-	},
+  "scripts": {
+    "start": "node .",
+    "dev": "nodemon ."
+  },
   "dependencies": {
+    "@reduxjs/toolkit": "^1.8.6",
     "redux": "^4.2.0"
   },
   "devDependencies": {
