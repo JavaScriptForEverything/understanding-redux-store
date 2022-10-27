@@ -38,16 +38,16 @@ const reducer = (state = initialState, action) => {
 module.exports = reducer
 
 
-module.exports.orderCake = (qty = 1) => {
-	return {
+module.exports.orderCake = (qty = 1) => (dispatch) => {
+	dispatch({ 
 		type: CAKE_ORDRED,
 		payload: qty
-	}
+	})
 }
 
-module.exports.restoreCake = (qty = 1) => {
-	return {
+module.exports.restoreCake = (qty = 1) => (dispatch) => {
+	dispatch({
 		type: CAKE_RESTORED,
 		payload: qty
-	}
+	})
 }

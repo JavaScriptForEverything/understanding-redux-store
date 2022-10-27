@@ -41,16 +41,16 @@ module.exports = reducer
 
 
 
-module.exports.orderIcecream = (qty = 1) => {
-	return {
+module.exports.orderIcecream = (qty = 1) => (dispatch) => {
+	dispatch({
 		type: ICECREAM_ORDRED,
 		payload: qty
-	}
+	})
 }
 
-module.exports.restoreIcecream = (qty = 1) => {
-	return {
+module.exports.restoreIcecream = (qty = 1) => (dispatch) => {
+	dispatch({
 		type: ICECREAM_RESTORED,
 		payload: qty
-	}
+	})
 }
