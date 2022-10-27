@@ -39,15 +39,31 @@ module.exports = reducer
 
 
 module.exports.orderCake = (qty = 1) => (dispatch) => {
-	dispatch({ 
-		type: CAKE_ORDRED,
-		payload: qty
-	})
+	try {
+		dispatch({ type: CAKE_REQUESTED })
+		dispatch({ 
+			type: CAKE_ORDRED,
+			payload: qty
+		})
+	} catch (err) {
+		dispatch({ 
+			type: CAKE_FAILED,
+			payload: err.message
+		})
+	}
 }
 
 module.exports.restoreCake = (qty = 1) => (dispatch) => {
-	dispatch({
-		type: CAKE_RESTORED,
-		payload: qty
-	})
+	try {
+		dispatch({ type: CAKE_REQUESTED })
+		dispatch({ 
+			type: CAKE_RESTORED,
+			payload: qty
+		})
+	} catch (err) {
+		dispatch({ 
+			type: CAKE_FAILED,
+			payload: err.message
+		})
+	}
 }

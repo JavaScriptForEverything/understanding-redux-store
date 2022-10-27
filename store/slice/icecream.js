@@ -41,16 +41,37 @@ module.exports = reducer
 
 
 
+// module.exports.orderIcecream = (qty = 1) => (dispatch) => {
+// 	dispatch({
+// 		type: ICECREAM_ORDRED,
+// 		payload: qty
+// 	})
+// }
 module.exports.orderIcecream = (qty = 1) => (dispatch) => {
-	dispatch({
-		type: ICECREAM_ORDRED,
-		payload: qty
-	})
+	try {
+		dispatch({ type: ICECREAM_REQUSTED })
+		dispatch({ 
+			type: ICECREAM_ORDRED,
+			payload: qty
+		})
+	} catch (err) {
+		dispatch({ 
+			type: ICECREAM_FAILED,
+			payload: err.message
+		})
+	}
 }
-
 module.exports.restoreIcecream = (qty = 1) => (dispatch) => {
-	dispatch({
-		type: ICECREAM_RESTORED,
-		payload: qty
-	})
+	try {
+		dispatch({ type: ICECREAM_REQUSTED })
+		dispatch({ 
+			type: ICECREAM_RESTORED,
+			payload: qty
+		})
+	} catch (err) {
+		dispatch({ 
+			type: ICECREAM_FAILED,
+			payload: err.message
+		})
+	}
 }
