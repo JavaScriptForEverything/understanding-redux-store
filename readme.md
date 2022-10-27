@@ -741,6 +741,14 @@ module.exports.restoreIcecream = (qty = 1) => (dispatch) => {
 
 
 ## createSlice and extraReducers
+
+### Why we need extraReducers
+	. We need in 2 cases:
+		1. if we need to change one slice's state based on other's action
+		2. To handle async action no matter from which slice it comes from
+
+
+
 ### createSlice
 ```
 const {} = createSlice({
@@ -800,9 +808,9 @@ const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit')
 const { actions: cakeSliceActions } = require('./cake')
 
 /* return actionCreator
-**					.panding
-**					.fulfilled
-**					.rejected
+**	.panding
+**	.fulfilled
+**	.rejected
 */ 
 const fetchedIcecream = createAsyncThunk('icecream/icecream', async() => 100 )
 
@@ -836,16 +844,16 @@ const { reducer, actions } = createSlice({
 		}),
 	},
 
-	// extraReducers: { 									// method-1: Object Style
+	// extraReducers: { 				// method-1: Object Style
 	// 	['cake/ordered']: (state, action) => ({
 	// 		...state,
 	// 		numberOfIcecream: state.numberOfIcecream - 10
 	// 	}),
 	// }
 
-	// extraReducers: (builder) => { 				// method-2: function Style
-	// 	// builder.addCase('cake/orderCake', (state, action) => ({ 					// not work
-	// 	builder.addCase(cakeSliceActions.ordered, (state, action) => ({ 		// It will work
+	// extraReducers: (builder) => { 		// method-2: function Style
+	// 	// builder.addCase('cake/orderCake', (state, action) => ({ 	// not work
+	// 	builder.addCase(cakeSliceActions.ordered, (state, action) => ({ // It will work
 	// 		...state,
 	// 		numberOfIcecream: state.numberOfIcecream - 10
 	// 	}))
@@ -917,7 +925,7 @@ const unsubscribe = store.subscribe(() => console.log(store.getState()))
 
 
 store.dispatch(icecreamSlice.fetchedIcecream())
-store.dispatch(icecreamSlice.fetchedIcecream()) 	// require to show 1st async output
+store.dispatch(icecreamSlice.fetchedIcecream()) // require to show 1st async output
 
 
 
