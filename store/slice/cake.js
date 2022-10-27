@@ -32,6 +32,8 @@ const { reducer, actions } = createSlice({
 })
 module.exports = reducer
 
+module.exports.actions = actions
+
 
 module.exports.orderCake = (qty = 1) => (dispatch) => {
 	try {
