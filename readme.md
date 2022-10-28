@@ -978,8 +978,8 @@ const App = () => {
 
 	return (
 		<>
-			<h2> Cake remails: {numberOfCake} </h2>
-			<h2> Icecream remails: {numberOfIcecream} </h2>
+			<h2> Cake remains: {numberOfCake} </h2>
+			<h2> Icecream remains: {numberOfIcecream} </h2>
 
 			<button onClick={handleCakeOrder}> Order Cake </button>
 			<button onClick={handleIcecreamOrder}> Order Icecream </button>

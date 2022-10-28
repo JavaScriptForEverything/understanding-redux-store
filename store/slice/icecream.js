@@ -73,9 +73,9 @@ const { reducer, actions } = createSlice({
 	}
 
 })
-module.exports = reducer
+export default reducer
 
-module.exports.orderIcecream = (qty = 1) => (dispatch) => {
+export const orderIcecream = (qty = 1) => (dispatch) => {
 	try {
 		dispatch(actions.requested())
 		dispatch(actions.ordered(qty))
@@ -83,7 +83,7 @@ module.exports.orderIcecream = (qty = 1) => (dispatch) => {
 		dispatch(actions.failed(err.message))
 	}
 }
-module.exports.restoreIcecream = (qty = 1) => (dispatch) => {
+export const restoreIcecream = (qty = 1) => (dispatch) => {
 	try {
 		dispatch(actions.requested())
 		dispatch(actions.restored(qty))

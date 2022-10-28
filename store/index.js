@@ -1,8 +1,9 @@
 import { configureStore } from '@reduxjs/toolkit'
 import { createWrapper } from  'next-redux-wrapper'
 
-const cakeSlice = require('./slice/cake')
-const icecreamSlice = require('./slice/icecream')
+import cakeSlice from './slice/cake'
+import icecreamSlice from './slice/icecream'
+
 
 const makeStore = () => configureStore({
 	reducer: {
