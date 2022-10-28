@@ -1,5 +1,5 @@
 import { Provider } from 'react-redux'
-import wrapper from '../store'
+import { wrapper } from '../store'
 
 const App = ({ Component, ...rest }) => {
 	const { store, props } = wrapper.useWrappedStore(rest)

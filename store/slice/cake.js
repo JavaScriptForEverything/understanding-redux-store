@@ -1,4 +1,4 @@
-const { createSlice } = require('@reduxjs/toolkit')
+import { createSlice } from '@reduxjs/toolkit'
 
 const { reducer, actions } = createSlice({
 	name: 'cake',
@@ -30,12 +30,10 @@ const { reducer, actions } = createSlice({
 		})
 	}
 })
-module.exports = reducer
-
-module.exports.actions = actions
+export default reducer
 
 
-module.exports.orderCake = (qty = 1) => (dispatch) => {
+export const orderCake = (qty = 1) => (dispatch) => {
 	try {
 		dispatch(actions.requested())
 		dispatch(actions.ordered(qty))
@@ -44,7 +42,7 @@ module.exports.orderCake = (qty = 1) => (dispatch) => {
 	}
 }
 
-module.exports.restoreCake = (qty = 1) => (dispatch) => {
+export const restoreCake = (qty = 1) => (dispatch) => {
 	try {
 		dispatch(actions.requested())
 		dispatch(actions.restored(qty))

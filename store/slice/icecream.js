@@ -1,12 +1,11 @@
-const { createSlice, createAsyncThunk } = require('@reduxjs/toolkit')
-const { actions: cakeSliceActions } = require('./cake')
+import { createSlice, createAsyncThunk } from '@reduxjs/toolkit'
 
 /* return actionCreator
 **					.panding
 **					.fulfilled
 **					.rejected
 */ 
-const fetchedIcecream = createAsyncThunk('icecream/icecream', async() => 100 )
+export const fetchedIcecream = createAsyncThunk('icecream/icecream', async() => 100 )
 
 const { reducer, actions } = createSlice({
 	name: 'icecream',
@@ -94,4 +93,3 @@ module.exports.restoreIcecream = (qty = 1) => (dispatch) => {
 }
 
 
-module.exports.fetchedIcecream = fetchedIcecream

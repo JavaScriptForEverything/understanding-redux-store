@@ -1,22 +1,14 @@
-const { configureStore } = require('@reduxjs/toolkit')
-const { createWrapper } = require('next-redux-wrapper')
-const logger = require('./middleware/logger')
-
-// dispatchFunc => redux-thunk => already installed and configured with redux-toolkit
-// const dispatchFunc = require('./middleware/dispatchFunc')
+import { configureStore } from '@reduxjs/toolkit'
+import { createWrapper } from  'next-redux-wrapper'
 
 const cakeSlice = require('./slice/cake')
 const icecreamSlice = require('./slice/icecream')
 
-
-// const store = configureStore({
 const makeStore = () => configureStore({
 	reducer: {
 		cake: cakeSlice,
 		icecream: icecreamSlice
 	},
-	middleware: (getMiddlewares) => [...getMiddlewares(), logger]
+	middleware: (getMiddlewares) => [...getMiddlewares()]
 })
-// module.exports = store
-const wrapper = createWrapper(makeStore, { debug: false })
-module.exports = wrapper
+export const wrapper = createWrapper(makeStore, { debug: false })
