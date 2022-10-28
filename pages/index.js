@@ -11,11 +11,13 @@ const HomePage = () => {
 	const { numberOfCake }  = useSelector(state => state.cake)
 	const { numberOfIcecream }  = useSelector(state => state.icecream)
 
-	const handleCakeOrder = () => {
-		dispatch(cakeSlice.orderCake(cakeInput.current.value))
+	const handleCakeOrder = (type) => () => {
+		if(type === 'order') dispatch(cakeSlice.orderCake(+cakeInput.current.value))
+		if(type === 'restore') dispatch(cakeSlice.restoreCake(+cakeInput.current.value))
 	}
-	const handleIcecreamOrder = () => {
-		dispatch(icecreamSlice.orderIcecream(icecreamInput.current.value))
+	const handleIcecreamOrder = (type) => () => {
+		if(type === 'order') dispatch(icecreamSlice.orderIcecream(+icecreamInput.current.value))
+		if(type === 'restore') dispatch(icecreamSlice.restoreIcecream(+icecreamInput.current.value))
 	}
 		
 
@@ -29,7 +31,8 @@ const HomePage = () => {
 					<label htmlFor='cakeInput'> Cake: </label>
 					<input id='cakeInput' ref={cakeInput} />
 				</div>
-				<button onClick={handleCakeOrder}>Order Cake</button>
+				<button onClick={handleCakeOrder('order')}>Order Cake</button>
+				<button onClick={handleCakeOrder('restore')}>Restore Cake</button>
 			</div>
 
 			<div>
@@ -37,9 +40,9 @@ const HomePage = () => {
 					<label htmlFor='icecreamInput'> Icecream: </label>
 					<input id='icecreamInput' ref={icecreamInput} />
 				</div>
-				<button onClick={handleIcecreamOrder}>Order Icecream</button>
+				<button onClick={handleIcecreamOrder('order')}>Order Icecream</button>
+				<button onClick={handleIcecreamOrder('restore')}>Restore Icecream</button>
 			</div>
-
 		</>
 	)
 }
