@@ -927,7 +927,240 @@ const unsubscribe = store.subscribe(() => console.log(store.getState()))
 store.dispatch(icecreamSlice.fetchedIcecream())
 store.dispatch(icecreamSlice.fetchedIcecream()) // require to show 1st async output
 
-
-
 unsubscribe()
 ```
+
+
+
+
+## Redux with React
+### When we use Redux our store folder remain exactly same as it was 
+- When we use redux no matter where we use the above concept and code remains same.
+- Just use ES Module syntax instead of CommonJS module syntax
+- To use `Redux` in `react` we need another npm package `react-redux` to bind store with `React`
+
+
+#### Required packages
+`$ yarn add @reduxjs/toolkit react-redux`
+
+#### /index.js 	/index.jsx 	
+```
+import { Provider } from 'react-redux'
+import store from './store' 			// /store/index.js 	
+....
+return (
+	<Provider store={store}>
+		<App />
+	</Provider>
+)
+
+```
+
+
+#### /App.js
+```
+import { useSelector, useDispatch } from 'react-redux'
+
+const App = () => {
+	const { numberOfCake } = useSelector(state => state.cake) 		// read from cake slice
+	const { numberOfIcecreame } = useSelector(state => state.icecream) 	// read from icecream slice
+
+	/* Note: `cake` and the `icecream` is the exact text which we given where we combine slice
+		reducer: {
+			cake: cakeReducer, 		// `cake` 	string
+			icecream: icecreamReducer, 	// `icecream` 	string
+		}
+	*/ 
+
+	const dispatch = useDispatch()
+	const handleCakeOrder = () => dispatch(cakeSlice.orderCake()) 		// modify cake slice
+	const handleIcecreamOrder = () => dispatch(icecreamSlice.orderIcecream(2)) // modify icecream slice
+
+	return (
+		<>
+			<h2> Cake remails: {numberOfCake} </h2>
+			<h2> Icecream remails: {numberOfIcecream} </h2>
+
+			<button onClick={handleCakeOrder}> Order Cake </button>
+			<button onClick={handleIcecreamOrder}> Order Icecream </button>
+		</>
+	)
+}
+
+```
+
+
+
+## Redux with Next.js
+### Setup `Redux` in `Next.js` same as `React` but little change
+- In `Next.js` we have option to dispatch from Client-Side and Server-Side
+- To handle dispatch from server-side we require one more package `next-redux-wrapper`
+
+### Required packages
+`$ yarn add @reduxjs/toolkit react-redux next-redux-wrapper`
+
+
+### /store/index.js
+```
+import { createWrapper } from 'next-redux-wrapper'
+...
+// const store = configureStore(...)
+const makeStore = () => configureStore(...)
+
+export const wrapper = createWrapper(makeStore)
+```
+
+### /pages/_app.js
+```
+import { Provider } from 'react-redux'
+const { wrapper } from '../store'
+
+export default function MyApp ({ Component, ...rest }) {
+	const { store, props } = wrapper.useWrappedStore(rest)
+	const { pageProps } = props
+
+	return (
+		<Provider store={store}>
+			<Component {...pageProps} >
+		</Provider>
+	)
+}
+```
+
+
+
+
+
+## Let's convert our current redux app into `Next.js` app
+
+### Require Package
+```
+$ yarn add next react react-dom eslint-config-next
+
+$ yarn add 	next 			: Next Framework
+		react 			: Next Framework depends on `react` package
+		react-dom 		: And `React` depends on `React-DOM`  		
+		eslint-config-next 	: Optional but recommended for linting
+```
+
+
+#### Package.json need to change little bit
+```
+...
+"scripts": {
+	"lint" : "next lint", 		// setup basic eslint
+	"dev" : "next", 		// instead of "nodemon ."
+	"build" : "next build",
+	"start" : "next start" 		// instead of "node ."
+}
+...
+
+```
+
+
+
+### Next.js required some folder structures
+- public/ 		: To serve public resources
+	. favicon.ico 	: Required the favicon for the page (copy or create your own favicon)
+- pages/ 		: To handle routing file
+	. _app.js 	: Root Component which wrapp all the pages
+	. index.js 	: Home Route 
+
+
+#### Home Page: /pages/index.js
+```
+const HomePage = () => {
+
+	return (
+		<>
+			<h2>Home Page</h2>
+		</>
+	)
+}
+export default HomePage
+```
+
+#### Root Page: /pages/_app.js
+```
+const App = ({ Component, pageProps }) => {
+
+	return (
+		<>
+			<Component {...pageProps} />
+		</>
+	)
+}
+export default App
+
+```
+
+
+#### See The App in Browser
+```
+$ yarn lint
+$ yarn dev 		: now go to : http://localhost:3000 
+```
+
+
+
+### Let's configure `Redux` with `Next.js` by folling the steps define above
+1. Installed: @reduxjs/toolkit, react-redux and next-redux-wrapper
+	. We already have installed `@reduxjs/toolkit`
+	. install next 2 package: $ yarn add react-redux next-redux-wrapper
+
+2. Codify /store/index.js file 	: See just change 2 commended line that's it
+
+```
+const { configureStore } = require('@reduxjs/toolkit')
+const { createWrapper } = require('next-redux-wrapper')
+const logger = require('./middleware/logger')
+
+// dispatchFunc => redux-thunk => already installed and configured with redux-toolkit
+// const dispatchFunc = require('./middleware/dispatchFunc')
+
+const cakeSlice = require('./slice/cake')
+const icecreamSlice = require('./slice/icecream')
+
+
+// const store = configureStore({
+const makeStore = () => configureStore({
+	reducer: {
+		cake: cakeSlice,
+		icecream: icecreamSlice
+	},
+	middleware: (getMiddlewares) => [...getMiddlewares(), logger]
+})
+// module.exports = store
+const wrapper = createWrapper(makeStore, { debug: false })
+module.exports = wrapper
+```
+
+
+3. Apply on `Next.js` /pages/_app.js file 	
+```
+import { Provider } from 'react-redux'
+import wrapper from '../store'
+
+const App = ({ Component, ...rest }) => {
+	const { store, props } = wrapper.useWrappedStore(rest)
+	const { pageProps } = props
+
+	return (
+		<Provider store={store}>
+			<Component {...pageProps} />
+		</Provider>
+	)
+}
+export default App
+```
+
+	. That's It our app is running: 
+	. if you have 'redux devtool' extention in your browser, you can test it.
+
+	. But as you know we used CommonJS module syntax in our old redux project
+		. We can change it to ES Module syntax (Modern Syntax)
+		. But Next.js support both syntax, that's the reason our old code still valid
+
+
+
+4. Final Step: Convert `CommonJS` module Syntax to `ES` Module Syntax in /store directory 
