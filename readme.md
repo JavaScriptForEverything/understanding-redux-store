@@ -1061,10 +1061,10 @@ $ yarn add 	next 			: Next Framework
 
 ### Next.js required some folder structures
 - public/ 		: To serve public resources
-	. favicon.ico 	: Required the favicon for the page (copy or create your own favicon)
+	- favicon.ico 	: Required the favicon for the page (copy or create your own favicon)
 - pages/ 		: To handle routing file
-	. _app.js 	: Root Component which wrapp all the pages
-	. index.js 	: Home Route 
+	- _app.js 	: Root Component which wrapp all the pages
+	- index.js 	: Home Route 
 
 
 #### Home Page: /pages/index.js
@@ -1103,10 +1103,10 @@ $ yarn dev 		: now go to : http://localhost:3000
 
 
 
-### Let's configure `Redux` with `Next.js` by folling the steps define above
+### Let's configure `Redux` with `Next.js` by following the steps define above
 1. Installed: @reduxjs/toolkit, react-redux and next-redux-wrapper
-	. We already have installed `@reduxjs/toolkit`
-	. install next 2 package: $ yarn add react-redux next-redux-wrapper
+	- We already have installed `@reduxjs/toolkit`
+	- Now let's install next 2 package: $ yarn add react-redux next-redux-wrapper
 
 2. Codify /store/index.js file 	: See just change 2 commended line that's it
 
@@ -1164,3 +1164,59 @@ export default App
 
 
 4. Final Step: Convert `CommonJS` module Syntax to `ES` Module Syntax in /store directory 
+
+
+
+
+### Now Read from `store` and write to `store` in UI (Home Page)
+#### /pages/index.js 
+```
+import { useRef } from 'react'
+import { useDispatch, useSelector } from 'react-redux'
+import * as cakeSlice from '../store/slice/cake'
+import * as icecreamSlice from '../store/slice/icecream'
+
+const HomePage = () => {
+	const dispatch = useDispatch()
+	const cakeInput = useRef()
+	const icecreamInput = useRef()
+
+	const { numberOfCake }  = useSelector(state => state.cake)
+	const { numberOfIcecream }  = useSelector(state => state.icecream)
+
+	const handleCakeOrder = () => {
+		dispatch(cakeSlice.orderCake(cakeInput.current.value))
+	}
+	const handleIcecreamOrder = () => {
+		dispatch(icecreamSlice.orderIcecream(icecreamInput.current.value))
+	}
+		
+
+	return (
+		<>
+			<h2>Cake remains: {numberOfCake}</h2>
+			<h2>Icecream remains: {numberOfIcecream}</h2>
+
+			<div style={{ marginBottom: 16 }}>
+				<div>
+					<label htmlFor='cakeInput'> Cake: </label>
+					<input id='cakeInput' ref={cakeInput} />
+				</div>
+				<button onClick={handleCakeOrder}>Order Cake</button>
+			</div>
+
+			<div>
+				<div>
+					<label htmlFor='icecreamInput'> Icecream: </label>
+					<input id='icecreamInput' ref={icecreamInput} />
+				</div>
+				<button onClick={handleIcecreamOrder}>Order Icecream</button>
+			</div>
+
+		</>
+	)
+}
+export default HomePage
+
+
+```
