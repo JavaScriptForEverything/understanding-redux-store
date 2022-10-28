@@ -1,5 +1,29 @@
 ## Understand Redux and Redux-ToolKit the easiest way.
 
+#### How to Read A `repository` [this repository]
+
+1. Click The **`19 commits`** link which is bellow the **`Code`** button
+	- It will shows all the commits in reverse order
+
+2. Go to last commit in the bottom and click on **`Commit Message`**
+- Every commits has 2 line: 
+	1. Commit Message: 	: **`creating first redux app`**
+	2. Contributor Email: 	: **` JavaScriptForEverything committed N days ago`**
+
+3. After clicking on any **`Commit Message`** you get bellow 3 option:
+	- Left Panel	: To nevigating file as we do in IDE/Code editor 
+	- Right Panel	: To See the codes on that commit: (as though we go back in Time)
+	- Browse Files 	: On Top see a button: To get real files on that particular commit 
+
+
+- Every commit goes one step of the redux concept.
+- Read Step by Step means commits by commits.
+
+
+
+
+#### Start From Here:
+
 Suppose a customer want to buy a cake, 	then there happed 3 steps:
 
 1. Customer:
