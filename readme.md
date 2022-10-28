@@ -1,6 +1,6 @@
 ## Understand Redux and Redux-ToolKit the easiest way.
 
-#### How to Read A `repository` [this repository]
+#### How to Read A `repository` [ How to go back in Time: When written which codes ]
 
 1. Click The **`19 commits`** link which is bellow the **`Code`** button
 	- It will shows all the commits in reverse order
